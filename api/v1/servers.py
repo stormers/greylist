@@ -1,6 +1,6 @@
 from flask import request
 from ..models import db, Server
-from ..decorators import json, collection,
+from ..decorators import json
 from . import api
 
 
