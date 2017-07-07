@@ -1,3 +1,3 @@
 TESTING = True
 SECRET_KEY = 'secret'
-SQLALCHEMY_DATABASE_URI = 'sqlite://'
+MONGO_URI = 'mongodb://localhost:27017/greylist'
