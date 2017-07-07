@@ -26,7 +26,7 @@ def get_server(name):
 def new_server():
     server = {}
     for arg in request.form.keys():
-        server[arg] = request.args[arg]
+        server[arg] = request.form[arg]
 
     servers = mongo.db.servers
     servers.insert_one(server)

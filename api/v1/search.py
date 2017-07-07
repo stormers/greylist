@@ -11,8 +11,8 @@ def search_servers():
     for arg in request.args.keys():
         query[arg] = request.args[arg]
 
-    servers, content = mongo.db.find(query), []
+    servers, content = mongo.db.servers.find(query), []
     for server in servers:
-        content.append(server.name)
+        content.append(server.get('name'))
 
     return "\n".join(content), 200
