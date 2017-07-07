@@ -1,5 +1,6 @@
 from flask import request
-from ..models import db, Server
+from flask import url_for
+from ..models import mongo
 from ..decorators import json
 from ..auth import auth
 from . import api
@@ -7,41 +8,49 @@ from . import api
 
 @api.route('/servers/', methods=['GET'])
 def get_servers():
-    servers, content = Server.query.all(), []
+    servers, content = mongo.db.servers.find(), []
     for server in servers:
-        content.append(server.name)
+        content.append(server.get('name'))
 
     return "\n".join(content), 200
 
 
-@api.route('/servers/<int:id>', methods=['GET'])
-def get_server(id):
-    return Server.query.get_or_404(id)
+@api.route('/servers/<name>', methods=['GET'])
+def get_server(name):
+    server = mongo.db.servers.find_one_or_404({'name': name})
+    return server
 
 
 @api.route('/servers/', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def new_server():
-    server = Server().import_data(request.get_json(force=True))
-    db.session.add(server)
-    db.session.commit()
-    return 'ok', 201, {'Location': server.get_url()}
+    server = {}
+    for arg in request.form.keys():
+        server[arg] = request.args[arg]
+
+    servers = mongo.db.servers
+    servers.insert_one(server)
+
+    return 'ok', 201, {'Location': url_for('api.get_server',
+                                           name=server.get('name'),
+                                           _external=True)}
 
 
-@api.route('/servers/<int:id>', methods=['PUT'])
-@auth.login_required
-def edit_server(id):
-    server = Server.query.get_or_404(id)
-    server.import_data(request.get_json(force=True))
-    db.session.add(server)
-    db.session.commit()
-    return {}
+@api.route('/servers/<name>', methods=['PUT'])
+# @auth.login_required
+def edit_server(name):
+    updated = {}
+    for arg in request.args.keys():
+        updated[arg] = request.args[arg]
+
+    server = mongo.db.servers.find_one_and_update({'name': name},
+                                                  {'$set': updated},
+                                                  return_document=ReturnDocument.AFTER)
+    return server, 200
 
 
-@api.route('/servers/<int:id>', methods=['DELETE'])
-@json
-def delete_server(id):
-    server = Server.query.get_or_404(id)
-    db.session.delete(server)
-    db.session.commit()
-    return {}
+@api.route('/servers/<name>', methods=['DELETE'])
+# @auth.login_required
+def delete_server(name):
+    server = mongo.db.servers.delete_one({'name': name})
+    return 'ok', 200
