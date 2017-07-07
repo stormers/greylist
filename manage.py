@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, g, jsonify
-from flask.ext.script import Manager
+from flask_script import Manager
 from api.app import create_app
 from api.models import db, User, Server
 

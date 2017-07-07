@@ -17,10 +17,6 @@ def create_app(config_module=None):
     from api.v1 import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/v1')
 
-    if app.config['USE_TOKEN_AUTH']:
-        from api.token import token as token_blueprint
-        app.register_blueprint(token_blueprint, url_prefix='/auth')
-
     @app.route('/')
     @auth.login_required
     @json

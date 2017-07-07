@@ -20,15 +20,10 @@ def bad_request(message):
 
 def unauthorized(message=None):
     if message is None:
-        if current_app.config['USE_TOKEN_AUTH']:
-            message = 'Please authenticate with your token.'
-        else:
-            message = 'Please authenticate.'
+        message = 'Please authenticate.'
     response = jsonify({'status': 401, 'error': 'unauthorized',
                         'message': message})
     response.status_code = 401
-    if current_app.config['USE_TOKEN_AUTH']:
-        response.headers['Location'] = url_for('token.request_token')
     return response
 
 

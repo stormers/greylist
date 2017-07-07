@@ -1,6 +1,5 @@
 from flask import Blueprint, g, url_for
 from ..errors import ValidationError, bad_request, not_found
-from ..auth import auth
 from ..decorators import json
 
 
@@ -22,7 +21,6 @@ def bad_request_error(e):
 
 
 @api.before_request
-@auth.login_required
 def before_request():
     pass
 
@@ -34,4 +32,4 @@ def after_request(response):
     return response
 
 # do this last to avoid circular dependencies
-from . import servers
+from . import servers, search
