@@ -7,7 +7,7 @@ api = Blueprint('api', __name__)
 
 
 def get_catalog():
-    return {'servers_url': url_for('api.get_servers', _external=True),}
+    return {'servers_url': url_for('api.get_servers', _external=True)}
 
 
 @api.errorhandler(ValidationError)
@@ -33,4 +33,3 @@ def after_request(response):
 
 # do this last to avoid circular dependencies
 from . import servers, search
-

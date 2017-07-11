@@ -7,7 +7,6 @@ from .decorators import json
 from .errors import not_found, not_allowed
 
 
-
 def create_app(config_module=None):
     app = Flask(__name__)
     app.config.from_object(config_module or
